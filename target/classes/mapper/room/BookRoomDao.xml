@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.room.dao.room.BookRoomDao">
+
+    <resultMap id="bookRoomEntity" type="com.room.entity.BookRoomEntity">
+        <result property="bookId" column="book_id"/>
+        <result property="roomName" column="room_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="bookDate" column="book_date" javaType="java.util.Date" jdbcType="DATE"/>
+        <result property="timeSpan" column="time_span"/>
+        <result property="operateTime" column="operate_time"/>
+        <result property="deleted" column="is_deleted"/>
+    </resultMap>
+    
+    <select id="queryRecordByClause" resultType="com.room.entity.BookRoomEntity">
+        SELECT user_name as userName,is_deleted as deleted,user_id as userId
+        from book_room_list
+        WHERE
+        room_name = #{roomName}
+        and book_date = #{bookDate}
+        and time_span = #{timeSpan}
+        and is_deleted=0
+    </select>
+
+
+    <insert id="save" parameterType="com.room.entity.BookRoomEntity" useGeneratedKeys="true" keyProperty="bookId">
+        INSERT INTO book_room_list(
+        room_name,
+        user_name,
+        user_id,
+        book_date,
+        time_span,
+        is_deleted
+        )VALUES (
+        #{roomName},
+        #{userName},
+        #{userId},
+        #{bookDate},
+        #{timeSpan},
+        0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.room.entity.BookRoomEntity">
+        update book_room_list
+        set is_deleted=#{deleted},
+        operate_time = #{operateTime}
+        WHERE room_name = #{roomName}
+        and user_id = #{userId}
+        and book_date = #{bookDate}
+        and time_span = #{timeSpan}
+
+    </update>
+
+    <select id="queryList" resultType="com.room.entity.BookRoomEntity">
+        SELECT a.room_name as roomName,a.user_name as userName,
+        DATE_FORMAT(a.book_date,'%Y-%m-%d') as bookDate,a.time_span as timeSpan,a.book_id as bookId
+        from book_room_list a
+        JOIN room_list b  on a.room_name = b.room_name
+        WHERE
+        a.book_date BETWEEN #{minDate} and #{maxDate}
+        and a.is_deleted=0
+        and b.state=0
+    </select>
+</mapper>

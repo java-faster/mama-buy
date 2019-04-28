@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.room.dao.ledger.UserDao">
+
+	<resultMap id="userEntity" type="com.room.entity.UserEntity">
+		<result property="userId" column="user_id"/>
+		<result property="userName" column="user_name"/>
+		<result property="wxId" column="open_id"/>
+		<result property="password" column="password"/>
+		<result property="salt" column="salt"/>
+		<result property="deleted" column="acount_status"/>
+		<result property="role" column="role"/>
+		<result property="loginState" column="login_state"/>
+	</resultMap>
+
+	<select id="queryUserName" parameterType="Map" resultType="com.room.entity.UserEntity">
+		select user_id as userId,user_name as userName,password,acount_status as deleted,salt,email
+		from user_info
+		<where>
+			<if test="wxId != null and wxId != ''">
+				open_id=#{wxId}
+			</if>
+			<if test="userName != null and userName != ''">
+				and user_name=#{userName}
+			</if>
+		</where>
+	</select>
+
+	<update id="update" parameterType="com.room.entity.UserEntity">
+		UPDATE user_info
+		<set> 1=1
+			<if test="wxId != null and wxId != ''">
+				and open_id=#{wxId},
+			</if>
+		</set>
+		WHERE user_id=#{userId}
+	</update>
+
+	<select id="queryUserNameByUserId" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT user_name as userName
+		FROM user_info
+		where user_id = #{userId}
+	</select>
+
+	<insert id="addNewUser" parameterType="com.room.entity.UserEntity"  useGeneratedKeys="true" keyProperty="userId">
+		INSERT INTO user_info(user_name, open_id,
+		password, salt, acount_status, role, login_state)VALUES (#{userName}, #{wxId}, NULL , #{salt}, 0, 1, 0)
+	</insert>
+
+	<select id="selectOpenId" resultType="java.lang.String">
+		SELECT open_id from user_info where user_name = #{userName}
+	</select>
+
+	<select id="existUser" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT count(*) from user_info where user_name = #{userName};
+	</select>
+
+	<update id="updateLoginStateByName" parameterType="java.lang.String">
+	    UPDATE user_info set login_state = 1 where user_name = #{userName};
+	</update>
+
+	<select id="selectLoginState" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT login_state as loginState
+		FROM user_info
+		WHERE user_name = #{userName}
+	</select>
+
+	<select id="checkOpenIdIsEqual" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM user_info
+		WHERE open_id = #{wxId}
+	</select>
+
+	<insert id="save" parameterType="com.room.entity.UserEntity" useGeneratedKeys="true" keyProperty="userId">
+		INSERT INTO user_info(user_name, open_id, role, login_state,login_date) VALUES (#{userName}, #{wxId}, #{role}, #{loginState},#{logindate})
+	</insert>
+
+	<select id="selectRoleByUserName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT role from user_info where user_name = #{userName}
+	</select>
+
+	<select id="selectRoleByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT role from user_info WHERE user_id = #{userId}
+	</select>
+
+	<select id="selectUserIdByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT user_id from user_info WHERE user_name = #{userName}
+	</select>
+
+	<select id="selectUserIdByOpenId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT user_id FROM user_info WHERE open_id = #{wxId};
+	</select>
+
+	<select id="selectUserNameByOpenId" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT user_name FROM user_info WHERE open_id = #{wxId};
+	</select>
+
+	<select id="selectLoginStateByOpenId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT login_state FROM user_info WHERE open_id = #{wxId};
+	</select>
+
+	<select id="selectRoleByOpenId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT role FROM user_info WHERE open_id = #{wxId}
+	</select>
+
+	<select id="checkUserById" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		SELECT count(*) FROM user_info WHERE user_id = #{userId}
+	</select>
+
+	<select id="checkUserByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT count(*) FROM user_info WHERE user_name = #{userName}
+	</select>
+	<insert id="insertComInfo" parameterType="com.room.entity.ComListEntity">
+		INSERT INTO company_list(
+		com_name,
+		rel_name,
+		tel_num,
+		email_num
+		)VALUES (
+		#{comName},
+		#{relName},
+		#{telNum},
+		#{eMailNum}
+		)
+	</insert>
+	<insert id="insertRoomInfo" parameterType="com.room.entity.RoomEntity">
+		INSERT INTO company_inf(
+		com_name,
+		com_post,
+		win_statue,
+		projector_statue,
+		roomed_statue,
+		instructions,
+		state,
+		create_date
+		)VALUES (
+		#{roomName},
+		#{position},
+		#{window},
+		#{projector},
+		#{meetingDevice},
+		#{introduction},
+		#{state},
+		#{createDate}
+		)
+	</insert>
+</mapper>

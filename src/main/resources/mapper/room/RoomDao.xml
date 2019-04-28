@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.room.dao.room.RoomDao">
+
+    <select id="queryList" resultType="java.lang.String">
+        SELECT room_name as roomName
+        FROM room_list
+        WHERE state=0
+    </select>
+
+    <select id="queryOne" resultType="com.room.entity.RoomEntity">
+        select *
+        from room_list
+        where room_name=#{roomName}
+        and state=0
+        limit 1
+    </select>
+</mapper>

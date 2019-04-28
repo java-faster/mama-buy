@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.room.dao.room.WXSessionDao">
+
+	<insert id="save" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO wx_session(
+		session_id,
+		open_id,
+		session_key
+		)VALUES (
+		#{sessionId},
+		#{openId},
+		#{sessionKey}
+		)
+	</insert>
+
+	<select id="selectOpenId" resultType="java.lang.String">
+		SELECT open_id as openId
+		from wx_session
+		where session_id=#{sessionId}
+	</select>
+
+	<select id="selectSessionId" resultType="java.lang.String">
+		SELECT session_id as sessionId
+		FROM wx_session
+		WHERE open_id=#{openId}
+	</select>
+
+	<update id="update" parameterType="Map">
+		update wx_session
+		set session_id=#{sessionId},
+		session_key=#{sessionKey}
+		where open_id=#{openId}
+	</update>
+</mapper>

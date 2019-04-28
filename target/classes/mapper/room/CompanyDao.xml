@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.room.dao.room.CompanyDao">
+
+    <resultMap id="CompanyEntity" type="com.room.entity.CompanyEntity">
+        <result property="company_id" column="company_id"/>
+        <result property="company_name" column="company_name"/>
+        <result property="invite_code" column="invite_code"/>
+        <result property="manager_id" column="manager_id"/>
+        <result property="manager_name" column="manager_name"/>
+    </resultMap>
+
+    <select id="selectInviteCode" resultType="java.lang.String">
+        SELECT invite_code FROM company_info WHERE company_id = #{company_id};
+    </select>
+
+    <select id="checkInvite" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT count(*) from company_info WHERE invite_code = #{invite_code}
+    </select>
+
+    <update id="updateInviteById" parameterType="java.lang.String">
+        UPDATE company_info set invite_code = #{invite_code} where company_id = 1;
+    </update>
+
+    <!--<select id="selectCompanyId" resultType="java.lang.Integer">-->
+        <!--SELECT company_id from company_info;-->
+    <!--</select>-->
+</mapper>
